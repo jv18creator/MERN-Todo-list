@@ -11,7 +11,15 @@ async function main() {
     console.log("client established", client);
 
     // create a function that lists avaialable databases
-    await listDatabases(client);
+    // await listDatabases(client);
+
+    // create new airbnb listing
+    await createListing(client, {
+      name: "Lovely Loft",
+      summary: "A charming loft in Paris",
+      bedrooms: 1,
+      bathrooms: 1,
+    });
 
     // Make the appropriate DB calls
   } catch (err) {
@@ -24,11 +32,25 @@ async function main() {
 
 main().catch(console.error);
 
+// Add functions that make DB calls here
+
 async function listDatabases(client) {
-  databasesList = await client.db().admin().listDatabases();
+  const databasesList = await client.db().admin().listDatabases();
 
   console.log("Databases:");
   databasesList.databases.forEach((db) => console.log(` - ${db.name}`));
 }
 
-// Add functions that make DB calls here
+async function createListing(client, newListing) {
+  const result = await client
+    .db("sample_airbnb")
+    .collection("listingsAndReviews")
+    .insertOne(newListing);
+
+  // sample_airbnb here is database
+  // listingsAndReviews is a collection of sample_airbnb
+
+  console.log(
+    `New listing created with the following id: ${result.insertedId}`
+  );
+}
