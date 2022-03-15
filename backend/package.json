@@ -2,10 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "connection.js",
+  "main": "crud.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node connection.js"
+    "start": "node crud.js"
   },
   "keywords": [],
   "author": "",

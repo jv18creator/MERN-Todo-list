@@ -27,11 +27,17 @@ async function main() {
     // await findOneListingByName(client, "Lovely Loft");
 
     // Read filtered doc
-    await findListingsWithMinimumBedroomsBathroomsAndMostRecentReviews(client, {
-      minimumNumberOfBedrooms: 4,
-      minimumNumberOfBathrooms: 2,
-      maximumNumberOfResults: 5,
-    });
+    // await findListingsWithMinimumBedroomsBathroomsAndMostRecentReviews(client, {
+    //   minimumNumberOfBedrooms: 4,
+    //   minimumNumberOfBathrooms: 2,
+    //   maximumNumberOfResults: 5,
+    // });
+
+    // Update One Document
+    // await updateListingByName(client, "Lovely Loft", { bedrooms: 2, beds: 8 });
+
+    // Delete One Document
+    await deleteListingByName(client, "Lovely Loft");
   } catch (err) {
     console.log("error occured", err);
   } finally {
@@ -122,4 +128,23 @@ async function findListingsWithMinimumBedroomsBathroomsAndMostRecentReviews(
       `No listings found with at least ${minimumNumberOfBedrooms} bedrooms and ${minimumNumberOfBathrooms} bathrooms`
     );
   }
+}
+
+async function updateListingByName(client, nameOfListing, updatedListing) {
+  const result = await client
+    .db("sample_airbnb")
+    .collection("listingsAndReviews")
+    .updateOne({ name: nameOfListing }, { $set: updatedListing });
+  console.log("result is", result);
+  console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+  console.log(`${result.modifiedCount} document(s) was/were updated.`);
+}
+
+async function deleteListingByName(client, nameOfListing) {
+  const result = await client
+    .db("sample_airbnb")
+    .collection("listingsAndReviews")
+    .deleteOne({ name: nameOfListing });
+  console.log("result is", result);
+  console.log(`${result.deletedCount} document(s) was/were deleted.`);
 }
