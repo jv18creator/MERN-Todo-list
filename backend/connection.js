@@ -1,8 +1,10 @@
 const { MongoClient } = require("mongodb");
 
 async function main() {
-  const uri =
-    "mongodb+srv://jv20:tq1V0lmA3qeV972I@cluster0.ndfhw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  const dotenv = require("dotenv");
+  dotenv.config();
+
+  const uri = `mongodb+srv://jv20:${process.env.PASSWORD_MONGODB}@cluster0.ndfhw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
   const client = new MongoClient(uri);
   try {
