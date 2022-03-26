@@ -1,50 +1,41 @@
 const express = require("express");
-const cors = require("cors");
-const mongoose = require("mongoose");
-
-const Todo = require("./models/Todo");
-
+const { MongoClient } = require("mongodb");
 const app = express();
-const PORT = 8000;
-
-mongoose.connect("mongodb://127.0.0.1:27017/todos", { useNewUrlParser: true });
-
-mongoose.connection.once("open", () => {
-  console.log("Mongodb connection established successfully");
-});
-
-app.use(cors());
-app.use(express.json());
+const port = 7000;
+const dotenv = require("dotenv");
+dotenv.config();
+const uri = `mongodb+srv://jv20:${process.env.PASSWORD_MONGODB}@cluster0.ndfhw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const client = new MongoClient(uri);
 
 app.get("/", (req, res) => {
-  Todo.find((err, todos) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.json(todos);
-    }
+  res.send("Hello World!");
+});
+
+async function main() {
+  try {
+    await client.connect();
+  } catch (error) {}
+}
+
+main();
+
+app.post("/stored", async (req, res) => {
+  console.log(req.body);
+  await addTodo(client, {
+    name: "Lovely Loft",
+    summary: "A charming loft in Paris",
+    bedrooms: 1,
+    bathrooms: 1,
   });
 });
 
-app.post("/create", (req, res) => {
-  const todo = new Todo(req.body);
-  todo
-    .save()
-    .then((todo) => {
-      res.json(todo);
-    })
-    .catch((err) => {
-      res.status(500).send(err.message);
-    });
-});
+async function addTodo(newTodo) {
+  const result = await client
+    .db("todo")
+    .collection("listingsAndReviews")
+    .insertOne(newTodo);
+}
 
-app.get("/:id", (req, res) => {
-  const id = req.params.id;
-  Todo.findById(id, (err, todo) => {
-    res.json(todo);
-  });
-});
-
-app.listen(PORT, () => {
-  console.log("Server is running");
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
 });
